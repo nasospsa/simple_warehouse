@@ -8,9 +8,6 @@ class Store
   end
 
   def store(posX, posY, width, height, type)
-    # total_width = @arr.size
-    # total_height = @arr[0].size
-
     posX = posX.to_i
     posY = posY.to_i
     width = width.to_i
