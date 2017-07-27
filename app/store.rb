@@ -25,7 +25,7 @@ class Store
       if @arr[_posy][_posx] == '-'
         products_to_store.push [_posy.to_i, _posx.to_i, type]
       else
-        raise 'Product doesn\'t fit'
+        raise 'Product doesn\'t fit.'
       end
     end
 
