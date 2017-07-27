@@ -17,18 +17,15 @@ class Store
     height = height.to_i
 
     if ((posX > (@width - 1)) || (posY > (@height - 1)))
-      raise 'Not enough space.'
+      raise 'Position doesn\'t exist.'
     end
-    # error handling
 
     products_to_store = []
-    (posY..posY+height-1).each do |_posy|
-      (posX..posX+width-1).each do |_posx|
-        if @arr[_posy][_posx] == '-'
-          products_to_store.push [_posy.to_i, _posx.to_i, type]
-        else
-          raise 'Product doesn\'t fit'
-        end
+    on_iterate(posX, posY, width, height) do |_posx, _posy|
+      if @arr[_posy][_posx] == '-'
+        products_to_store.push [_posy.to_i, _posx.to_i, type]
+      else
+        raise 'Product doesn\'t fit'
       end
     end
 
@@ -56,12 +53,12 @@ class Store
         return _remove(crate)
       end
     end
-    raise "No crate in position #{posX}, posY"
+    raise "No crate in position #{posX}, #{posY}"
   end
 
   def view
     @arr.each do |a|
-      puts a.join ' '
+      puts a.join "\t"
     end
   end
 
@@ -70,12 +67,17 @@ class Store
   def _remove(crate)
     posX, posY, width, height, type = crate
 
-    (posY..posY+height-1).each do |_posy|
-      (posX..posX+width-1).each do |_posx|
-        @arr[_posy][_posx] = '-'
-      end
+    on_iterate(posX, posY, width, height) do |_posx, _posy|
+      @arr[_posy][_posx] = '-'
     end
     @crates.delete_at(@crates.index(crate))
   end
 
+  def on_iterate(posX, posY, width, height)
+    (posY..posY+height-1).each do |_posy|
+      (posX..posX+width-1).each do |_posx|
+        yield(_posx, _posy)
+      end
+    end
+  end
 end
