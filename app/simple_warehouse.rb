@@ -31,6 +31,19 @@ class SimpleWarehouse
         rescue Exception => e
           show_invalid_message(e.message)
         end
+      when 'remove'
+        if (@store.remove(*args))
+          puts "Crate successfully removed!"
+        else
+          show_invalid_message
+        end
+      when 'locate'
+        found = @store.locate *args
+        if found.size > 0
+          puts "Product #{args[0]} found in: ", found.map { |f| f.join ', ' }
+        else
+          puts "No product found of type #{args[0]}"
+        end
       when 'help'
         show_help_message
       when 'view'
@@ -60,7 +73,7 @@ exit             Exits the application.'
   end
 
   def show_invalid_message(error = nil)
-    puts 'Sorry there was an error.', error
+    puts "Sorry there was an error. #{error}"
   end
 
   def show_unrecognized_message

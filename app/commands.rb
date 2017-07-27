@@ -3,6 +3,7 @@ class Store
   def initialize(x, y)
     @width = x.to_i
     @height = y.to_i
+    @crates = []
     @arr = Array.new(@height) { |i| Array.new(@width) {'-'} }
   end
 
@@ -28,16 +29,31 @@ class Store
       end
     end
 
+    @crates.push [posX, posY, width, height, type]
     products_to_store.each do |p|
       @arr[p[0]][p[1]] = p[2]
     end
   end
 
-  def locate
-    
+  def locate(type)
+    found  = []
+    @arr.each_with_index do |column, vidx|
+      column.each_with_index do |pos, hidx|
+        if pos == type
+          found.push [vidx, hidx]
+        end
+      end
+    end
+    found
   end
 
-  def remove
+  def remove(posX, posY)
+    @crates.each do |crate|
+      if crate[0] == posX.to_i && crate[1] == posY.to_i
+        return _remove(crate)
+      end
+    end
+    false
   end
 
   def view
@@ -45,4 +61,18 @@ class Store
       puts a.join ' '
     end
   end
+
+  private
+
+  def _remove(crate)
+    posX, posY, width, height, type = crate
+
+    (posY..posY+height-1).each do |_posy|
+      (posX..posX+width-1).each do |_posx|
+        @arr[_posy][_posx] = '-'
+      end
+    end
+    @crates.delete_at(@crates.index(crate))
+  end
+
 end
