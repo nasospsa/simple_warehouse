@@ -16,6 +16,9 @@ class Store
     width = width.to_i
     height = height.to_i
 
+    if ((posX > (@width - 1)) || (posY > (@height - 1)))
+      raise 'Not enough space.'
+    end
     # error handling
 
     products_to_store = []
@@ -53,7 +56,7 @@ class Store
         return _remove(crate)
       end
     end
-    false
+    raise "No crate in position #{posX}, posY"
   end
 
   def view

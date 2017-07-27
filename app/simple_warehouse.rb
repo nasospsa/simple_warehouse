@@ -23,21 +23,26 @@ class SimpleWarehouse
         @store = Store.new width, height
         puts "Store initiated with a table of #{width} x #{height}"
       when 'store'
-        return show_invalid_message if @store.nil?
+        return show_not_initiated if @store.nil?
 
         begin
           @store.store(*args)
-          show_success
+          puts 'Product successfully saved.'
         rescue Exception => e
           show_invalid_message(e.message)
         end
       when 'remove'
-        if (@store.remove(*args))
+        return show_not_initiated if @store.nil?
+
+        begin
+          @store.remove(*args)
           puts "Crate successfully removed!"
-        else
-          show_invalid_message
+        rescue Exception => e
+          show_invalid_message(e.message)
         end
       when 'locate'
+        return show_not_initiated if @store.nil?
+
         found = @store.locate *args
         if found.size > 0
           puts "Product #{args[0]} found in: ", found.map { |f| f.join ', ' }
@@ -47,7 +52,8 @@ class SimpleWarehouse
       when 'help'
         show_help_message
       when 'view'
-        return show_invalid_message if !@store
+        return show_not_initiated if @store.nil?
+
         @store.view
       when 'exit'
         exit
@@ -68,12 +74,11 @@ view             Show a representation of the current state of the warehouse, ma
 exit             Exits the application.'
   end
 
-  def show_success
-    puts 'Product successfully saved.'
+  def show_not_initiated
+    show_invalid_message('No store initiated.')
   end
-
   def show_invalid_message(error = nil)
-    puts "Sorry there was an error. #{error}"
+    puts error || 'Sorry there was an error.'
   end
 
   def show_unrecognized_message
